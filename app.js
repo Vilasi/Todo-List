@@ -76,6 +76,7 @@ const generateTemplate = (todo) => {
 
 //This will remove the dropdown options from the form input.
 addForm.autocomplete = 'off';
+search.autocomplete = 'off';
 
 addForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -103,11 +104,30 @@ list.addEventListener('click', (event) => {
 // filter todos
 const filterTodos = (term) => {
   //This will return an HTMLCollection. It must be turned into an array before array methods can be used on it.
-  Array.from(list.children).filter(() => {});
+  //Even though this is being applied to the <ul>.children <li> tags, using .textContent will still return the text inside the <span> tags inside the <li> tags
+  //When any character is entered into the search bar, it will be checked against the array of <li> tags.
+  // The textContent in the <span> tags in the <li> tags will be checked.
+  //If the character or character sequence is not present in the textContent, a class of filtered will be applied to that <li> tag which does not contain the term.
+  Array.from(list.children)
+
+    .filter((item) => !item.textContent.toLowerCase().includes(term))
+    .forEach((item) => item.classList.add('filtered'));
+
+  //This makes it so that if there is an array item with a match to term, the class 'filter' will be removed if it is present.
+  //This will make it so that the class will be removed in the event that a user deletes some content from the search bar.
+  Array.from(list.children)
+
+    .filter((item) => item.textContent.toLowerCase().includes(term))
+    .forEach((item) => item.classList.remove('filtered'));
 };
 
 // keyup event
 search.addEventListener('keyup', () => {
-  const term = search.value.trim();
+  const term = search.value.toLowerCase().trim();
   filterTodos(term);
 });
+
+let test = ['test', 'puppy', 'kitten'];
+let string = 'test';
+let newArray = Array.from(string).filter((item) => !item.includes('e'));
+console.log(newArray);
