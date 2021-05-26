@@ -2,6 +2,12 @@ const newTodo = document.querySelector('form.add');
 const ul = document.querySelector('ul');
 const search = document.querySelector('form.search');
 
+//If localStorage has key ulString - set  ul.innerHTML to its value
+let ulString = JSON.stringify(ul.innerHTML);
+if (localStorage.ulString) {
+  ul.innerHTML = JSON.parse(localStorage.ulString);
+}
+
 //Remove the dropdown options from the form input field.
 newTodo.autocomplete = 'off';
 search.autocomplete = 'off';
@@ -17,6 +23,10 @@ const generateLi = (input) => {
       <span>${input}</span>
       <i class="lar la-trash-alt delete"></i>
   </li>`;
+
+  //Store the new <li> item in localStorage
+  ulString = JSON.stringify(ul.innerHTML);
+  localStorage.setItem('ulString', ulString);
   newTodo.reset();
 };
 
@@ -38,6 +48,7 @@ ul.addEventListener('click', (event) => {
   if (event.target.classList.value.includes('delete')) {
     //d-none is a bootstrap class which sets the display to none.
     event.target.parentNode.remove();
+    localStorage.ulString = JSON.stringify(ul.innerHTML);
   }
 });
 
@@ -60,4 +71,11 @@ const listFilter = (value) => {
   Array.from(ul.children)
     .filter((li) => li.textContent.toLowerCase().includes(value))
     .forEach((li) => li.classList.remove('d-none'));
+};
+
+//Store ul.innerHTML in localStorage if it is not already present.
+window.onload = () => {
+  if (!localStorage.ulString) {
+    localStorage.setItem('ulString', JSON.stringify(ul.innerHTML));
+  }
 };
